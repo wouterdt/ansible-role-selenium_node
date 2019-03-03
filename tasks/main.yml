@@ -1,0 +1,58 @@
+---
+- name: create top dir
+  file:
+     path: '{{ selenium_dir }}'
+     state: directory
+     owner: '{{ selenium_user }}'
+     group: '{{ selenium_group }}'
+     mode: 0774
+  become: true
+  become_user: root
+- name: create sub dir
+  file:
+     path: "{{ item }}"
+     state: directory
+     owner: '{{ selenium_user }}'
+     group: '{{ selenium_group }}'
+     mode: 0774
+  with_items:
+     - "{{ selenium_dir }}/node"
+     - "{{ selenium_dir }}/node/lib"
+     - "{{ selenium_dir }}/node/downloads"
+     - "{{ selenium_dir }}/node/lib"
+     - "{{ selenium_dir }}/node/driver"
+  become: true
+- name: install packages
+  yum:
+     name:
+        - java-1.8.0-openjdk
+  become: true
+- name: download selenium
+  get_url:
+     url: "{{selenium_server_url}}"
+     dest: "{{selenium_dir}}/node/lib/selenium-server-standalone.jar"
+  become: true
+  become_user: '{{ selenium_user }}'
+- name: download geckodriver
+  unarchive:
+     src: "{{ selenium_hub_gecko_download }}"
+     dest: '{{ selenium_dir }}/node/driver/'
+     mode: 0775
+     remote_src: true
+  become: true
+  become_user: '{{ selenium_user }}'
+- name: set gecko driver
+  set_fact:
+     selenium_gecko_driver: '-Dwebdriver.gecko.driver={{selenium_dir}}/node/driver/geckodriver'
+- name: template selenium systemd
+  template:
+     src: '{{ role_path }}/templates/selenium_node.service.j2'
+     dest: '/etc/systemd/system/selenium_node@.service'
+     mode: 0544
+  become: true
+  notify: systemd_reload
+- name: add startupscripts for all firefox users
+  include: firefoxprofile.yml
+  loop: "{{firefox_profile}}"
+  loop_control:
+     loop_var: item

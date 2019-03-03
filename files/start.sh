@@ -1,0 +1,1 @@
+java -cp *:lib/* -Dwebdriver.gecko.driver=geckodriver org.openqa.grid.selenium.GridLauncherV3 -role  node -nodeConfig node.conf -servlets NodeServlet

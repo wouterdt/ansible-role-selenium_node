@@ -1,0 +1,12 @@
+[Unit]
+Description=Selenium Node %i
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User={{ selenium_user }}
+
+ExecStart=/bin/bash {{ selenium_dir }}/node/start_%I.sh
+
+[Install]
+WantedBy=multi-user.target

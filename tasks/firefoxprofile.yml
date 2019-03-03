@@ -1,0 +1,21 @@
+---
+- name: template selenium startup
+  template:
+     src: '{{ role_path }}/templates/start.j2'
+     dest: '{{ selenium_dir }}/node/start_{{item.username}}_{{item.profile}}.sh'
+     group: "{{selenium_group}}"
+     mode: 0777
+  become: true
+  become_user: '{{ item.username }}'
+- name: template selenium config
+  template:
+     src: '{{ role_path }}/templates/node.j2'
+     dest: '{{ selenium_dir }}/node/{{item.username}}_{{item.profile}}.conf'
+  become: true
+  become_user: '{{ item.username }}'
+- name: enable the systemd service
+  systemd:
+     name: 'selenium_node@{{item.username}}_{{item.profile}}'
+     state: started
+     enabled: true
+  become: true

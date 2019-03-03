@@ -1,0 +1,15 @@
+---
+group: selenium
+hub_server: http://localhost:8080
+hub_port: 8080
+selenium_server_url: https://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar
+selenium_dir: /opt/selenium
+selenium_user: daemon
+selenium_port: 4444
+selenium_geckoversion: 0.24.0
+selenium_hub_gecko_download: "https://github.com/mozilla/geckodriver/releases/download/v{{selenium_geckoversion}}/geckodriver-v{{selenium_geckoversion}}-linux64.tar.gz"
+selenium_group: daemon
+firefox_profile:
+  - username: daemon
+    profile: default
+    port: 4444
